@@ -9,23 +9,30 @@ def number_of_student():
 
 
 # Input student information: id, name, DoB
-def student_info():
-    students = []
-    num_students = number_of_student()
+def student_information(num_students):
+    '''
+    Create a dictionary to store the info of students with keys are IDs 
+    and values are dictionaries that store name, dob and marks
+    '''
+    students = {}
     for i in range(num_students):
         print(f"\nStudent {i+1}")
         student_id = input("Student ID: ")
         student_name = input("Student's name: ")
         student_dob = input("Student's date of birth: ")
-        student_marks = []
-        students.append({"id": student_id, "name": student_name, "dob": student_dob, "marks": {}})
+        # Take student_id as the key
+        students[student_id] = { 
+            "name": student_name, 
+            "dob": student_dob, 
+            "marks": {}
+            }
 
     return students
 
 
 # Input the number of courses
 def number_of_courses():
-    num_courses = int(input("Number of courses: "))
+    num_courses = int(input("\nNumber of courses: "))
     
     if num_courses > 0:
         return num_courses
@@ -34,13 +41,20 @@ def number_of_courses():
 
 
 # Input course information: id, name
-def course_info():
+def course_information(num_courses):
+    '''
+    Create a list to store info of courses, including a dictionary "students"
+    '''
     courses = []
-    num_courses = number_of_courses()
     for i in range(num_courses):
-        course_id = input("Course ID: ")
+        course_id = input("\nCourse ID: ")
         course_name = input("Course's name: ")
-        courses.append({"id": course_id, "name": course_name, "students": {}})
+        courses.append({
+            "id": course_id, 
+            "name": course_name, 
+            "students": {}
+            }
+        )
 
     return courses
 
@@ -48,26 +62,76 @@ def course_info():
 # List all courses with their corresponding index
 def list_courses(courses):
     for index, course in enumerate(courses, 1):
-        print(f"Course {index}:\n")
-        print(f"ID: {course["id"]} - Name: {course["name"]}")
+        print(f"\nCourse {index}:")
+        print(f"ID: {course['id']} - Name: {course['name']}")
+    return
 
 
-# Input marks for student in a selected course
-def input_mark(courses):
-    '''
-    Select a course and enter marks for midterm and final exams for each student
-    '''
-    
-    choice = input("Select a course by entering its ID: ")
+# List out all students
+def list_students(students):
+    print("\nList of all students")
+    for index, (student_id, student_info) in enumerate(students.items(), 1):
+        print(f"{index}. ID: {student_id} - Name: {student_info['name']}\n")
+    return
+
+
+def select_course(courses):
+    choice = input("\nSelect a course by entering its ID: ")
     # Search for the a course that contains the matching ID in the list "courses", print None if not found
     selected = next((course for course in courses if course["id"] == choice), None)
 
-    print(f"Input marks for {selected["id"]} {selected["name"]} course")
-    for student_name in selected["students"].items():
-        print(f"\nEntering marks for student {student_name}: ")
-        midterm_mark = float(input("Enter midterm mark for " + selected["name"] + " : "))
-        final_mark = float(input("\nEnter final mark for " + selected["name"] + " : "))
-        student_info["marks"] = {"midterm": midterm_mark, "final": final_mark}
+    return selected
 
-    return # this is a void function
 
+# Input marks for student in a selected course
+def input_marks(courses, students):
+    '''
+    Select a course and enter marks for midterm and final exams for each student
+    '''
+    selected = select_course(courses)
+
+    print(f"Input marks for {selected['name']} course")
+    for student_id, student_info in students.items():
+        # student_name = student_info["name"]
+        print(f"Entering marks for student {student_info['name']}: ")
+        midterm_mark = float(input("Enter midterm mark for " + selected["name"] + ": "))
+        final_mark = float(input("Enter final mark for " + selected["name"] + ": "))
+        selected["students"][student_id] = {
+            "name": student_info["name"],
+            "marks": {
+                "midterm": midterm_mark,
+                "final": final_mark
+            }
+        }
+
+
+# Show student marks for a given course
+def show_marks(courses):
+    selected = select_course(courses)
+    for student_id, student_info in selected["students"].items():
+        marks = student_info["marks"]
+        print(f"Name: {student_info['name']}")
+        print(f"ID: {student_id}")
+        print(f"Midterm mark: {marks['midterm']}")
+        print(f"Final mark: {marks['final']}")
+    
+    return
+
+
+
+# Input num of students
+num_students = number_of_student()
+# Enter students' info
+students = student_information(num_students)
+# Input num of course
+num_courses = number_of_courses()
+# Enter courses' info
+courses = course_information(num_courses)
+# List all courses
+list_courses(courses)
+# List all students
+list_students(students)
+
+# Input mảrks
+input_marks(courses, students)
+show_marks(courses)
