@@ -20,7 +20,6 @@ def student_information(num_students):
         student_id = input("Student ID: ")
         student_name = input("Student's name: ")
         student_dob = input("Student's date of birth: ")
-        # Take student_id as the key
         students[student_id] = { 
             "name": student_name, 
             "dob": student_dob, 
@@ -64,7 +63,6 @@ def list_courses(courses):
     for index, course in enumerate(courses, 1):
         print(f"\nCourse {index}:")
         print(f"ID: {course['id']} - Name: {course['name']}")
-    return
 
 
 # List out all students
@@ -72,9 +70,9 @@ def list_students(students):
     print("\nList of all students")
     for index, (student_id, student_info) in enumerate(students.items(), 1):
         print(f"{index}. ID: {student_id} - Name: {student_info['name']}\n")
-    return
 
 
+# Select a course
 def select_course(courses):
     choice = input("\nSelect a course by entering its ID: ")
     # Search for the a course that contains the matching ID in the list "courses", print None if not found
@@ -92,7 +90,6 @@ def input_marks(courses, students):
 
     print(f"Input marks for {selected['name']} course")
     for student_id, student_info in students.items():
-        # student_name = student_info["name"]
         print(f"Entering marks for student {student_info['name']}: ")
         midterm_mark = float(input("Enter midterm mark for " + selected["name"] + ": "))
         final_mark = float(input("Enter final mark for " + selected["name"] + ": "))
@@ -110,13 +107,10 @@ def show_marks(courses):
     selected = select_course(courses)
     for student_id, student_info in selected["students"].items():
         marks = student_info["marks"]
-        print(f"Name: {student_info['name']}")
+        print(f"\nName: {student_info['name']}")
         print(f"ID: {student_id}")
         print(f"Midterm mark: {marks['midterm']}")
         print(f"Final mark: {marks['final']}")
-    
-    return
-
 
 
 # Input num of students
@@ -132,6 +126,7 @@ list_courses(courses)
 # List all students
 list_students(students)
 
-# Input mảrks
+# Input mảrks for a course
 input_marks(courses, students)
+# Show marks of a course
 show_marks(courses)
