@@ -81,7 +81,16 @@ class Course:
                 float(input("Enter final mark: "))
             ]
             
-        
+        def newCourse():
+            print("Enter information for a new course: \n")
+            
+            course = Course()
+            course.setName(input("Enter course's name: \n"))
+            course.setID(input("Enter course's ID: \n"))
+            course.setStudents(input("Enter student's name to enter marks: \n"))
+            
+            
 
+            
             
             
