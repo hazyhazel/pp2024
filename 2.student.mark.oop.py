@@ -3,7 +3,6 @@ class Student:
         self._id = ""
         self._name = ""
         self._dob = ""
-        self._marks = {}
         self._students = []
         
     def __str__(self):
