@@ -1,5 +1,5 @@
-import math
-from numpy import array
+from math import floor
+import numpy as np
 
 class Student:
     def __init__(self):
@@ -8,6 +8,7 @@ class Student:
         self._dob = ""
         self._students = []
         
+        
     def __str__(self):
         '''
         List all students' information
@@ -15,11 +16,13 @@ class Student:
         for student in self._students:
             return f"{self._id} - {self._name} - {self._dob}"
 
+
     def setName(self, name):
         if isinstance(name, str) and name != "":
             self._name = name
         else:
             print("Invalid input of name. Enter name again: ")
+    
     
     def setID(self, id):
         if isinstance(id, str) and id != "":
@@ -27,20 +30,25 @@ class Student:
         else:
             print("Invalid input of ID. Enter again: ")
     
+    
     def setDob(self, dob):
         if isinstance(dob, str) and dob != "":
             self._dob = dob
         else:
             print("Invalid input of date of birth. Enter again: ")
     
+    
     def getName(self):
         return self._name
+    
     
     def getID(self):
         return self._id
     
+    
     def getDob(self):
         return self._dob
+
 
     def newStudent():
         print("Enter information for a new student:")
@@ -48,7 +56,7 @@ class Student:
         
         student.setName(input("Enter student's name: \n")) 
         student.setID(input("Enter student ID: "))
-        student.setDob(input("Enter student's date of birth: \n"))
+        student.setDob(input("Enter student's date of birth: "))
         
         return student
         
@@ -57,8 +65,10 @@ class Course:
     def __init__(self):
         self._id = ""
         self._name = ""
-        self._marks = {} # {student: [midterm mark, final mark]}
+        self._marks = {} # {student: [attendance, midterm mark, final mark]}
+        self.weights = np.zeros(3, dtype=float)
         self._courses = []
+        
         
     def __str__(self):
         '''
@@ -67,11 +77,13 @@ class Course:
         for course in self._courses:
             return f"Course: {self._id} - {self._name}"
     
+    
     def setName(self, name):
         if isinstance(name, str) and name != "":
             self._name = name
         else:
             print("Invalid input of name. Enter name again: ")
+    
     
     def setID(self, id):
         if isinstance(id, str) and id != "":
@@ -79,25 +91,39 @@ class Course:
         else:
             print("Invalid input of ID. Enter again: ")
 
+
     def setMarks(self):
+        '''
+        Assign marks for each student. Input attendance, midterm and final mark first,
+        calculate GPA then append later to the list self._marks[student_id]
+        '''
         student_id = input("Enter the student ID to input marks: ")
         if student_id in self._marks:
-            print(f"Adding marks for student {student_id}")
+            print(f"Updating marks for student {student_id}")
         else:
             print(f"Adding marks for student {student_id}") 
-            midterm = math.floor(float(input("Enter midterm mark: ")))
-            final = math.floor(float(input("Enter final mark: ")))
-            self._marks[student_id] = [midterm, final]
-            print(f"Successfully added/updated for student {student_id}")
+            attendance = floor(float(input("Enter attendance mark: ")))
+            midterm = floor(float(input("Enter midterm mark: ")))
+            final = floor(float(input("Enter final mark: ")))
+            self._marks[student_id] = [attendance, midterm, final]
+            
+            gpa = self.calculateGPA()
+            if gpa != None:
+                self._marks[student_id].append(gpa)
+                print(f"Successfully added/updated for student {student_id}")
+        
         
     def getName(self):
         return self._name 
 
+
     def getID(self):
         return self._id
     
+    
     def getMarks(self):
         return self._marks
+    
     
     def showMarks(self):
         '''
@@ -110,16 +136,41 @@ class Course:
             for key, marks in self._marks.items():
                 print(
                     f"{key}:\n"
-                    f"Midterm mark: {marks[0]}\n"
-                    f"Final mark: {marks[1]}"
+                    f"Attendance mark: {marks[0]}\n"
+                    f"Midterm mark: {marks[1]}\n"
+                    f"Final mark: {marks[2]}\n"
+                    f"GPA: {marks[3]}"
                 )
+    
+    
+    def setWeights(self):
+        labels = ["attendance mark", "midterm mark", "final mark"]
+        print("Enter weights for each of the mark:")
+        for i, label in enumerate(labels):
+            self.weights[i] = float(input(f"Enter weight for {label}: "))
+    
+    
+    def calculateGPA(self):
+        student_id = input("Enter the student ID to calculate GPA: ")
+        if student_id not in self._marks:
+            print(f"Student {student_id} has no marks assigned")
+            return None
+        
+        # Take the first 3 marks only: attendance, midterm and final
+        marks = np.array(self._marks[student_id][:3])
+        
+        gpa = np.sum(self.weights * marks)
+        
+        return gpa
+        
         
     def newCourse():
         print("Enter information for a new course:")
         
         course = Course()
         course.setName(input("Enter course's name: "))
-        course.setID(input("Enter course's ID: \n"))
+        course.setID(input("Enter course's ID: "))
+        course.setWeights()
         
         return course
             
