@@ -40,14 +40,13 @@ class Student:
     def getDob(self):
         return self._dob
 
-    def newStudent(self):
-        print("Enter information for a new student: \n")
+    def newStudent():
+        print("Enter information for a new student:")
         student = Student()
         
         student.setName(input("Enter student's name: \n")) 
         student.setID(input("Enter student ID: "))
         student.setDob(input("Enter student's date of birth: \n"))
-        self._students.append(student)
         
         return student
         
@@ -56,7 +55,7 @@ class Course:
     def __init__(self):
         self._id = ""
         self._name = ""
-        self._marks = {} # {student: [midterm, final]}
+        self._marks = {} # {student: [midterm mark, final mark]}
         self._courses = []
         
     def __str__(self):
@@ -78,12 +77,12 @@ class Course:
         else:
             print("Invalid input of ID. Enter again: ")
 
-    def setMarks(self, student_id : str):
+    def setMarks(self):
         student_id = input("Enter the student ID to input marks: ")
         if student_id in self._marks:
-            print("Updating the marks for this student")
+            print(f"Adding marks for student {student_id}")
         else:
-            print("Adding marks for this student")
+            print(f"Adding marks for student {student_id}") 
             midterm = float(input("Enter midterm mark: "))
             final = float(input("Enter final mark: "))
             self._marks[student_id] = [midterm, final]
@@ -113,19 +112,17 @@ class Course:
                     f"Final mark: {marks[1]}"
                 )
         
-    def newCourse(self):
-        print("Enter information for a new course: \n")
+    def newCourse():
+        print("Enter information for a new course:")
         
         course = Course()
-        course.setName(input("Enter course's name: \n"))
+        course.setName(input("Enter course's name: "))
         course.setID(input("Enter course's ID: \n"))
-        course.setStudents(input("Enter student's name to enter marks: \n"))
-        self._courses.append(course)
         
         return course
             
             
-def selectCourse(course_list, choice):
+def selectCourse(course_list):
     '''
     Select a course from the course list to later display students' info and marks
     '''
@@ -136,3 +133,47 @@ def selectCourse(course_list, choice):
         selected = next((course for course in course_list if course._id == choice), None)
         
         return selected
+
+def main():
+    students = []
+    courses = []
+
+    while True:
+        print("\n--- Options ---")
+        print("1. Add a new student")
+        print("2. Add a new course")
+        print("3. Assign marks to a student in a course")
+        print("4. Show all students in a selected course")
+        print("5. Exit")
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            student = Student.newStudent()
+            students.append(student)
+            print("New student added!")
+
+        elif choice == "2":
+            course = Course.newCourse()
+            courses.append(course)
+            print("New course added!")
+
+        elif choice == "3":
+            course = selectCourse(courses)
+            if course:
+                course.setMarks()
+                print("Marks assigned!")
+
+        elif choice == "4":
+            course = selectCourse(courses)
+            if course:
+                course.showMarks()
+
+        elif choice == "5":
+            print("Exiting program...")
+            break
+
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
