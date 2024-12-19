@@ -1,5 +1,6 @@
 from math import floor
 import numpy as np
+import curses as crs
 
 class Student:
     def __init__(self):
@@ -125,24 +126,6 @@ class Course:
         return self._marks
     
     
-    def showMarks(self):
-        '''
-        Show marks of all students in the course
-        '''
-        if self._marks == {}:
-            print("No marks have been added to students in this course")
-        else:
-            print("Displaying marks of students in this course: ")
-            for key, marks in self._marks.items():
-                print(
-                    f"{key}:\n"
-                    f"Attendance mark: {marks[0]}\n"
-                    f"Midterm mark: {marks[1]}\n"
-                    f"Final mark: {marks[2]}\n"
-                    f"GPA: {marks[3]}"
-                )
-    
-    
     def setWeights(self):
         labels = ["attendance mark", "midterm mark", "final mark"]
         print("Enter weights for each of the mark:")
@@ -162,6 +145,39 @@ class Course:
         gpa = np.sum(self.weights * marks)
         
         return gpa
+        
+        
+    def showMarks(self):
+        '''
+        Show marks of all students in the course
+        '''
+        if self._marks == {}:
+            print("No marks have been added to students in this course")
+        else:
+            print("Displaying marks of students in this course: ")
+            for key, marks in self._marks.items():
+                print(
+                    f"{key}:\n"
+                    f"Attendance mark: {marks[0]}\n"
+                    f"Midterm mark: {marks[1]}\n"
+                    f"Final mark: {marks[2]}\n"
+                    f"GPA: {marks[3]}"
+                )
+        
+        
+    def sortbyGPA(self):
+        students_with_gpa = []
+        for student_id, marks in self._marks.items():
+            if marks[3] == None: # marks[3] is the GPA
+                gpa = self.calculateGPA()
+            else:
+                students_with_gpa.append((student_id, marks[3]))
+        
+        students_with_gpa.sort(key=lambda student : student[1], reverse=True) # student[1] is the GPA each tuple
+        
+        print("\nStudents sorted by GPA in descending order:")
+        for index, (student_id, gpa) in enumerate(students_with_gpa, start=1):
+            print(f"{index}. Student ID: {student_id}, GPA: {gpa}")  
         
         
     def newCourse():
@@ -186,7 +202,8 @@ def selectCourse(course_list):
         selected = next((course for course in course_list if course._id == choice), None)
         
         return selected
-
+    
+    
 def main():
     students = []
     courses = []
@@ -197,7 +214,8 @@ def main():
         print("2. Add a new course")
         print("3. Assign marks to a student in a course")
         print("4. Show all students in a selected course")
-        print("5. Exit")
+        print("5. Sort students by their GPA in descending order")
+        print("6. Exit")
         choice = input("Enter your choice: ")
 
         if choice == "1":
@@ -222,6 +240,11 @@ def main():
                 course.showMarks()
 
         elif choice == "5":
+            course = selectCourse(courses)
+            if course:
+                course.sortbyGPA()
+            
+        elif choice == "6":
             print("Exiting program...")
             break
 
