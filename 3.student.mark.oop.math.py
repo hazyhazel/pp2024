@@ -103,25 +103,38 @@ class Course:
             print("Invalid input of ID. Enter again: ")
 
 
-    def setMarks(self):
+    def setMarks(self, stdscr):
         '''
         Assign marks for each student. Input attendance, midterm and final mark first,
         calculate GPA then append later to the list self._marks[student_id]
         '''
-        student_id = input("Enter the student ID to input marks: ")
+        stdscr.clear()
+        stdscr.addstr("Enter the student ID to input marks: ")
+        student_id = stdscr.getstr().decode().strip()
+        
         if student_id in self._marks:
-            print(f"Updating marks for student {student_id}")
+            stdscr.addstr(f"\nUpdating marks for student {student_id}")
         else:
-            print(f"Adding marks for student {student_id}") 
-            attendance = floor(float(input("Enter attendance mark: ")))
-            midterm = floor(float(input("Enter midterm mark: ")))
-            final = floor(float(input("Enter final mark: ")))
-            self._marks[student_id] = [attendance, midterm, final]
-            
-            gpa = self.calculateGPA()
-            if gpa != None:
-                self._marks[student_id].append(gpa)
-                print(f"Successfully added/updated for student {student_id}")
+            stdscr.addstr(f"\nAdding marks for student {student_id}") 
+        
+        stdscr.addstr("\nEnter attendance mark: ")    
+        attendance = int(stdscr.getstr().decode().strip())
+
+        stdscr.addstr("\nEnter midterm mark: ")
+        midterm = int(stdscr.getstr().decode().strip())
+
+        stdscr.addstr("\nEnter final mark: ")
+        final = int(stdscr.getstr().decode().strip())
+
+        self._marks[student_id] = [attendance, midterm, final]
+
+        gpa = self.calculateGPA(stdscr)
+        if gpa != None:
+            self._marks[student_id].append(gpa)
+            stdscr.addstr(f"\nSuccessfully added/updated marks for student {student_id}\n")
+
+        stdscr.refresh()
+        stdscr.getch()
         
         
     def getName(self):
@@ -150,10 +163,12 @@ class Course:
         stdscr.refresh()
     
     
-    def calculateGPA(self):
-        student_id = input("Enter the student ID to calculate GPA: ")
+    def calculateGPA(self, stdscr):
+        stdscr.clear()
+        stdscr.addstr("Enter the student ID to calculate GPA: ")
+        student_id = stdscr.getstr().decode().strip()
         if student_id not in self._marks:
-            print(f"Student {student_id} has no marks assigned")
+            stdscr.addstr(f"Student {student_id} has no marks assigned")
             return None
         
         # Take the first 3 marks only: attendance, midterm and final
@@ -236,7 +251,7 @@ class UI():
     
     
     def close(self):
-        self.stdscr.addstr("Press any key to return to the menu.")
+        self.stdscr.addstr("\nPress any key to return to the menu.")
         self.stdscr.refresh()
         self.stdscr.getch()
         
@@ -277,14 +292,14 @@ class UI():
                     self.start()
                     student = Student.newStudent(self.stdscr)
                     students.append(student)
-                    self.stdscr.addstr("New student added! ")
+                    self.stdscr.addstr("\nNew student added! ")
                     self.close()
                     
                 elif choice == 2:
                     self.start()
                     course = Course.newCourse(self.stdscr)
                     courses.append(course)
-                    self.stdscr.addstr("New course added! ")
+                    self.stdscr.addstr("\nNew course added! ")
                     self.close()
                     
                 elif choice == 3:
@@ -292,7 +307,7 @@ class UI():
                     course = selectCourse(courses, self.stdscr)
                     if course:
                         course.setMarks(self.stdscr)
-                        self.stdscr.addstr("Marks assigned! ")
+                        self.stdscr.addstr("\nMarks assigned! ")
                     self.close()
                     
                 elif choice == 4:
@@ -311,7 +326,7 @@ class UI():
                 # is 6 necessary?
                 elif choice == 6:
                     self.start()
-                    self.stdscr.addstr("Exiting...")
+                    self.stdscr.addstr("\nExiting...")
                     self.close()
                     break
     
@@ -328,16 +343,16 @@ def selectCourse(course_list, stdscr):
     
     stdscr.clear()
     stdscr.addstr("\nSelect a course by entering its ID: ")
-    for course in course_list:
-        stdscr.addstr(f"{course._id} - {course._name}")
+    for idx, course in enumerate(course_list, start=1):
+        stdscr.addstr(f"\n{idx}. {course._id} - {course._name}")
     stdscr.refresh()
     
-    stdscr.addstr("Enter course ID: ")
+    stdscr.addstr("\nEnter course ID: ")
     choice = stdscr.getstr().decode().strip()
     
     selected = next((course for course in course_list if course._id == choice), None)
     if not selected:
-        stdscr.addstr("This course does not exist.\n")
+        stdscr.addstr("\nThis course does not exist.\n")
         stdscr.refresh()
         stdscr.getch()
         
