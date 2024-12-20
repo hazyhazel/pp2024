@@ -136,11 +136,18 @@ class Course:
         return self._marks
     
     
-    def setWeights(self):
+    def setWeights(self, stdscr):
         labels = ["attendance mark", "midterm mark", "final mark"]
-        print("Enter weights for each of the mark:")
+        stdscr.clear()
+        stdscr.addstr("Enter weights for each of the mark:")
         for i, label in enumerate(labels):
-            self.weights[i] = float(input(f"Enter weight for {label}: "))
+            stdscr.addstr(f"Enter weight for {label}: ")
+            stdscr.refresh()
+            weight_str = stdscr.getstr().decode().strip()
+            self.weights[i] = float(weight_str)
+            # self.weights[i] = float(input(f"Enter weight for {label}: "))
+        stdscr.refresh()
+        stdscr.getch()
     
     
     def calculateGPA(self):
@@ -190,6 +197,7 @@ class Course:
         for index, (student_id, gpa) in enumerate(students_with_gpa, start=1):
             print(f"{index}. Student ID: {student_id}, GPA: {gpa}")  
         
+        
     @staticmethod
     def newCourse(stdscr):
         stdscr.clear()
@@ -205,7 +213,7 @@ class Course:
         course = Course()
         course.setName(course_name)
         course.setID(course_id)
-        course.setWeights()
+        course.setWeights(stdscr)
         
         return course
             
@@ -267,23 +275,23 @@ class UI():
 
                 if choice == 1:
                     self.start()
-                    student = Student.newStudent()
+                    student = Student.newStudent(self.stdscr)
                     students.append(student)
-                    self.stdscr.addnstr("New student added!")
+                    self.stdscr.addstr("New student added!")
                     self.close()
                     
                 elif choice == 2:
                     self.start()
-                    course = Course.newCourse()
+                    course = Course.newCourse(self.stdscr)
                     courses.append(course)
-                    self.stdscr.addnstr("New course added!")
+                    self.stdscr.addstr("New course added!")
                     self.close()
                     
                 elif choice == 3:
                     self.start()
                     course = selectCourse(courses)
                     if course:
-                        course.setMarks()
+                        course.setMarks(self.stdscr)
                         self.stdscr.addstr("Marks assigned!")
                     self.close()
                     
@@ -291,7 +299,7 @@ class UI():
                     self.start()
                     course = selectCourse(courses)
                     if course:
-                        course.sortbyGPA()
+                        course.showMarks(self.stdscr)
                     self.close()
                     
                 elif choice == 5:
@@ -306,22 +314,34 @@ class UI():
                     self.stdscr.addstr("Exiting...")
                     self.close()
                     break
-
-        self.start()
-        self.close()
     
             
-def selectCourse(course_list):
+def selectCourse(course_list, stdscr):
     '''
     Select a course from the course list to later display students' info and marks
     '''
     if course_list == []:
-        print("This course list is empty.")
-    else:
-        choice = input("\nSelect a course by entering its ID: ")
-        selected = next((course for course in course_list if course._id == choice), None)
+        stdscr.addstr("This course list is empty.")
+        stdscr.refresh()
+        stdscr.getch()
+        return None
+    
+    stdscr.clear()
+    stdscr.addstr("\nSelect a course by entering its ID: ")
+    for course in course_list:
+        stdscr.addstr(f"{course._id} - {course._name}")
+    stdscr.refresh()
+    
+    stdscr.addstr("Enter course ID: ")
+    choice = stdscr.getstr().decode().strip()
+    
+    selected = next((course for course in course_list if course._id == choice), None)
+    if not selected:
+        stdscr.addstr("This course does not exist.\n")
+        stdscr.refresh()
+        stdscr.getch()
         
-        return selected
+    return selected
     
 
 def main(stdscr):
