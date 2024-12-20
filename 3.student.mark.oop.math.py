@@ -55,13 +55,13 @@ class Student:
     def newStudent(stdscr):
         stdscr.clear()
         stdscr.addstr("Enter information for a new student:")
-        stdscr.addstr("Enter student's name: ")
+        stdscr.addstr("\nEnter student's name: ")
         name = stdscr.getstr().decode().strip()
         
-        stdscr.addstr("Enter student ID: ")
+        stdscr.addstr("\nEnter student ID: ")
         student_id = stdscr.getstr().decode().strip()
         
-        stdscr.addstr("Enter student's date of birth: ")
+        stdscr.addstr("\nEnter student's date of birth: ")
         dob = stdscr.getstr().decode().strip()
         
         student = Student()
@@ -141,13 +141,13 @@ class Course:
         stdscr.clear()
         stdscr.addstr("Enter weights for each of the mark:")
         for i, label in enumerate(labels):
-            stdscr.addstr(f"Enter weight for {label}: ")
+            stdscr.addstr(f"\nEnter weight for {label}: ")
             stdscr.refresh()
             weight_str = stdscr.getstr().decode().strip()
             self.weights[i] = float(weight_str)
             # self.weights[i] = float(input(f"Enter weight for {label}: "))
-        stdscr.refresh()
         stdscr.getch()
+        stdscr.refresh()
     
     
     def calculateGPA(self):
@@ -203,10 +203,10 @@ class Course:
         stdscr.clear()
         stdscr.addstr("Enter information for a new course:")
         
-        stdscr.addstr("Enter course's name: ")
+        stdscr.addstr("\nEnter course's name: ")
         course_name = stdscr.getstr().decode().strip()
         
-        stdscr.addstr("Enter course's ID: ")
+        stdscr.addstr("\nEnter course's ID: ")
         course_id = stdscr.getstr().decode().strip()
         
         
@@ -277,34 +277,34 @@ class UI():
                     self.start()
                     student = Student.newStudent(self.stdscr)
                     students.append(student)
-                    self.stdscr.addstr("New student added!")
+                    self.stdscr.addstr("New student added! ")
                     self.close()
                     
                 elif choice == 2:
                     self.start()
                     course = Course.newCourse(self.stdscr)
                     courses.append(course)
-                    self.stdscr.addstr("New course added!")
+                    self.stdscr.addstr("New course added! ")
                     self.close()
                     
                 elif choice == 3:
                     self.start()
-                    course = selectCourse(courses)
+                    course = selectCourse(courses, self.stdscr)
                     if course:
                         course.setMarks(self.stdscr)
-                        self.stdscr.addstr("Marks assigned!")
+                        self.stdscr.addstr("Marks assigned! ")
                     self.close()
                     
                 elif choice == 4:
                     self.start()
-                    course = selectCourse(courses)
+                    course = selectCourse(courses, self.stdscr)
                     if course:
                         course.showMarks(self.stdscr)
                     self.close()
                     
                 elif choice == 5:
                     self.start()
-                    course = selectCourse(courses)
+                    course = selectCourse(courses, self.stdscr)
                     if course:
                         course.sortbyGPA()
                     self.close()
