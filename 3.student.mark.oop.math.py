@@ -1,6 +1,7 @@
+import sys, os
 from math import floor
 import numpy as np
-import curses as crs
+import curses
 
 class Student:
     def __init__(self):
@@ -50,14 +51,23 @@ class Student:
     def getDob(self):
         return self._dob
 
-
-    def newStudent():
-        print("Enter information for a new student:")
-        student = Student()
+    @staticmethod
+    def newStudent(stdscr):
+        stdscr.clear()
+        stdscr.addstr("Enter information for a new student:")
+        stdscr.addstr("Enter student's name: ")
+        name = stdscr.getstr().decode().strip()
         
-        student.setName(input("Enter student's name: \n")) 
-        student.setID(input("Enter student ID: "))
-        student.setDob(input("Enter student's date of birth: "))
+        stdscr.addstr("Enter student ID: ")
+        student_id = stdscr.getstr().decode().strip()
+        
+        stdscr.addstr("Enter student's date of birth: ")
+        dob = stdscr.getstr().decode().strip()
+        
+        student = Student()
+        student.setName(name) 
+        student.setID(student_id)
+        student.setDob(dob)
         
         return student
         
@@ -173,23 +183,133 @@ class Course:
             else:
                 students_with_gpa.append((student_id, marks[3]))
         
-        students_with_gpa.sort(key=lambda student : student[1], reverse=True) # student[1] is the GPA each tuple
+        students_with_gpa.sort(key=lambda student : student[1], reverse=True) 
+        # student[1] is the GPA each tuple
         
         print("\nStudents sorted by GPA in descending order:")
         for index, (student_id, gpa) in enumerate(students_with_gpa, start=1):
             print(f"{index}. Student ID: {student_id}, GPA: {gpa}")  
         
+    @staticmethod
+    def newCourse(stdscr):
+        stdscr.clear()
+        stdscr.addstr("Enter information for a new course:")
         
-    def newCourse():
-        print("Enter information for a new course:")
+        stdscr.addstr("Enter course's name: ")
+        course_name = stdscr.getstr().decode().strip()
+        
+        stdscr.addstr("Enter course's ID: ")
+        course_id = stdscr.getstr().decode().strip()
+        
         
         course = Course()
-        course.setName(input("Enter course's name: "))
-        course.setID(input("Enter course's ID: "))
+        course.setName(course_name)
+        course.setID(course_id)
         course.setWeights()
         
         return course
             
+            
+class UI():
+    def __init__(self, stdscr):
+        self.stdscr = stdscr
+        self.menu = [
+            "1. Add a new student",
+            "2. Add a new course",
+            "3. Assign marks to a student in a course",
+            "4. Show all students in a selected course",
+            "5. Sort students by their GPA in descending order",
+            "6. Exit"
+        ]
+        
+        
+    def start(self):
+        self.stdscr.clear()
+    
+    
+    def close(self):
+        self.stdscr.addstr("Press any key to return to the menu.")
+        self.stdscr.refresh()
+        self.stdscr.getch()
+        
+    def displayMenu(self, index=0):
+        """
+        Display the menu
+        """
+        self.stdscr.clear()
+        self.stdscr.addstr("Menu:\n", curses.A_BOLD)
+
+        for idx, option in enumerate(self.menu):
+            if idx == index:
+                # Highlight the current option
+                self.stdscr.addstr(f"{option}\n", curses.A_REVERSE)
+            else:
+                self.stdscr.addstr(f"{option}\n")
+
+        self.stdscr.refresh()
+        
+    def run(self):
+        highlight_idx = 0
+        students = []
+        courses = []
+        
+        while True:
+            self.displayMenu(highlight_idx)
+
+            key = self.stdscr.getch()
+
+            if key == curses.KEY_UP and highlight_idx > 0:
+                highlight_idx -= 1
+            elif key == curses.KEY_DOWN and highlight_idx < len(self.menu) - 1:
+                highlight_idx += 1
+            elif key == ord('\n'):  # Enter to choose
+                choice = highlight_idx + 1
+
+                if choice == 1:
+                    self.start()
+                    student = Student.newStudent()
+                    students.append(student)
+                    self.stdscr.addnstr("New student added!")
+                    self.close()
+                    
+                elif choice == 2:
+                    self.start()
+                    course = Course.newCourse()
+                    courses.append(course)
+                    self.stdscr.addnstr("New course added!")
+                    self.close()
+                    
+                elif choice == 3:
+                    self.start()
+                    course = selectCourse(courses)
+                    if course:
+                        course.setMarks()
+                        self.stdscr.addstr("Marks assigned!")
+                    self.close()
+                    
+                elif choice == 4:
+                    self.start()
+                    course = selectCourse(courses)
+                    if course:
+                        course.sortbyGPA()
+                    self.close()
+                    
+                elif choice == 5:
+                    self.start()
+                    course = selectCourse(courses)
+                    if course:
+                        course.sortbyGPA()
+                    self.close()
+                # is 6 necessary?
+                elif choice == 6:
+                    self.start()
+                    self.stdscr.addstr("Exiting...")
+                    self.close()
+                    break
+
+        self.start()
+        self.close()
+    
             
 def selectCourse(course_list):
     '''
@@ -203,53 +323,11 @@ def selectCourse(course_list):
         
         return selected
     
+
+def main(stdscr):
+    curses.curs_set(0)
+    ui = UI(stdscr)
+    ui.run()
     
-def main():
-    students = []
-    courses = []
-
-    while True:
-        print("\n--- Options ---")
-        print("1. Add a new student")
-        print("2. Add a new course")
-        print("3. Assign marks to a student in a course")
-        print("4. Show all students in a selected course")
-        print("5. Sort students by their GPA in descending order")
-        print("6. Exit")
-        choice = input("Enter your choice: ")
-
-        if choice == "1":
-            student = Student.newStudent()
-            students.append(student)
-            print("New student added!")
-
-        elif choice == "2":
-            course = Course.newCourse()
-            courses.append(course)
-            print("New course added!")
-
-        elif choice == "3":
-            course = selectCourse(courses)
-            if course:
-                course.setMarks()
-                print("Marks assigned!")
-
-        elif choice == "4":
-            course = selectCourse(courses)
-            if course:
-                course.showMarks()
-
-        elif choice == "5":
-            course = selectCourse(courses)
-            if course:
-                course.sortbyGPA()
-            
-        elif choice == "6":
-            print("Exiting program...")
-            break
-
-        else:
-            print("Invalid choice. Please try again.")
-
 if __name__ == "__main__":
-    main()
+    curses.wrapper(main)
