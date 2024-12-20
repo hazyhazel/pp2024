@@ -179,38 +179,42 @@ class Course:
         return gpa
         
         
-    def showMarks(self):
+    def showMarks(self, stdscr):
         '''
         Show marks of all students in the course
         '''
+        stdscr.clear()
         if self._marks == {}:
-            print("No marks have been added to students in this course")
+            stdscr.addstr("No marks have been added to students in this course")
         else:
-            print("Displaying marks of students in this course: ")
+            stdscr.addstr("Displaying marks of students in this course: \n")
             for key, marks in self._marks.items():
-                print(
+                stdscr.addstr(
                     f"{key}:\n"
                     f"Attendance mark: {marks[0]}\n"
                     f"Midterm mark: {marks[1]}\n"
                     f"Final mark: {marks[2]}\n"
                     f"GPA: {marks[3]}"
                 )
+        stdscr.refresh()
+        stdscr.getch()
         
         
-    def sortbyGPA(self):
+    def sortbyGPA(self, stdscr):
+        stdscr.clear()
         students_with_gpa = []
         for student_id, marks in self._marks.items():
             if marks[3] == None: # marks[3] is the GPA
-                gpa = self.calculateGPA()
+                gpa = self.calculateGPA(stdscr)
             else:
                 students_with_gpa.append((student_id, marks[3]))
         
         students_with_gpa.sort(key=lambda student : student[1], reverse=True) 
         # student[1] is the GPA each tuple
         
-        print("\nStudents sorted by GPA in descending order:")
+        stdscr.addstr("Students sorted by GPA in descending order:")
         for index, (student_id, gpa) in enumerate(students_with_gpa, start=1):
-            print(f"{index}. Student ID: {student_id}, GPA: {gpa}")  
+            stdscr.addstr(f"\n{index}. Student ID: {student_id}, GPA: {gpa}")  
         
         
     @staticmethod
@@ -321,12 +325,12 @@ class UI():
                     self.start()
                     course = selectCourse(courses, self.stdscr)
                     if course:
-                        course.sortbyGPA()
+                        course.sortbyGPA(self.stdscr)
                     self.close()
                 # is 6 necessary?
                 elif choice == 6:
                     self.start()
-                    self.stdscr.addstr("\nExiting...")
+                    self.stdscr.addstr("Exiting...")
                     self.close()
                     break
     
