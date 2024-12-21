@@ -55,15 +55,10 @@ class Student:
     def newStudent(stdscr):
         stdscr.clear()
         stdscr.addstr("Enter information for a new student:")
-        stdscr.addstr("\nEnter student's name: ")
-        name = stdscr.getstr().decode().strip()
         
-        stdscr.addstr("\nEnter student ID: ")
-        student_id = stdscr.getstr().decode().strip()
-        
-        stdscr.addstr("\nEnter student's date of birth: ")
-        dob = stdscr.getstr().decode().strip()
-        
+        name = getInput(stdscr, "\nEnter student's name: ")
+        student_id = getInput(stdscr, "\nEnter student ID: ")
+        dob = getInput(stdscr, "\nEnter student's date of birth: ")
         student = Student()
         student.setName(name) 
         student.setID(student_id)
@@ -102,40 +97,6 @@ class Course:
         else:
             print("Invalid input of ID. Enter again: ")
 
-
-    def setMarks(self, stdscr):
-        '''
-        Assign marks for each student. Input attendance, midterm and final mark first,
-        calculate GPA then append later to the list self._marks[student_id]
-        '''
-        stdscr.clear()
-        stdscr.addstr("Enter the student ID to input marks: ")
-        student_id = stdscr.getstr().decode().strip()
-        
-        if student_id in self._marks:
-            stdscr.addstr(f"\nUpdating marks for student {student_id}")
-        else:
-            stdscr.addstr(f"\nAdding marks for student {student_id}") 
-        
-        stdscr.addstr("\nEnter attendance mark: ")    
-        attendance = int(stdscr.getstr().decode().strip())
-
-        stdscr.addstr("\nEnter midterm mark: ")
-        midterm = int(stdscr.getstr().decode().strip())
-
-        stdscr.addstr("\nEnter final mark: ")
-        final = int(stdscr.getstr().decode().strip())
-
-        self._marks[student_id] = [attendance, midterm, final]
-
-        gpa = self.calculateGPA(stdscr)
-        if gpa != None:
-            self._marks[student_id].append(gpa)
-            stdscr.addstr(f"\nSuccessfully added/updated marks for student {student_id}\n")
-
-        stdscr.refresh()
-        stdscr.getch()
-        
         
     def getName(self):
         return self._name 
@@ -149,24 +110,50 @@ class Course:
         return self._marks
     
     
+    def setMarks(self, stdscr):
+        '''
+        Assign marks for each student. Input attendance, midterm and final mark first,
+        calculate GPA then append later to the list self._marks[student_id]
+        '''
+        stdscr.clear()
+        student_id = getInput(stdscr, "Enter the student ID to input marks: ")
+        
+        if student_id in self._marks:
+            stdscr.addstr(f"\nUpdating marks for student {student_id}")
+        else:
+            stdscr.addstr(f"\nAdding marks for student {student_id}") 
+          
+        attendance = int(getInput(stdscr, "\nEnter attendance mark: "))
+        midterm = int(getInput(stdscr, "\nEnter midterm mark: "))
+        final = int(getInput(stdscr, "\nEnter final mark: "))
+
+        self._marks[student_id] = [attendance, midterm, final]
+
+        gpa = self.calculateGPA(stdscr)
+        if gpa != None:
+            self._marks[student_id].append(gpa)
+            stdscr.addstr(f"\nSuccessfully added/updated marks for student {student_id}\n")
+
+        stdscr.refresh()
+        stdscr.getch()
+    
+    
     def setWeights(self, stdscr):
         labels = ["attendance mark", "midterm mark", "final mark"]
         stdscr.clear()
         stdscr.addstr("Enter weights for each of the mark:")
         for i, label in enumerate(labels):
-            stdscr.addstr(f"\nEnter weight for {label}: ")
             stdscr.refresh()
-            weight_str = stdscr.getstr().decode().strip()
+            weight_str = getInput(stdscr, f"\nEnter weight for {label}: ")
             self.weights[i] = float(weight_str)
-            # self.weights[i] = float(input(f"Enter weight for {label}: "))
+            
         stdscr.getch()
         stdscr.refresh()
     
     
     def calculateGPA(self, stdscr):
         stdscr.clear()
-        stdscr.addstr("Enter the student ID to calculate GPA: ")
-        student_id = stdscr.getstr().decode().strip()
+        student_id = getInput(stdscr, "Enter the student ID to calculate GPA: ")
         if student_id not in self._marks:
             stdscr.addstr(f"Student {student_id} has no marks assigned")
             return None
@@ -222,12 +209,8 @@ class Course:
         stdscr.clear()
         stdscr.addstr("Enter information for a new course:")
         
-        stdscr.addstr("\nEnter course's name: ")
-        course_name = stdscr.getstr().decode().strip()
-        
-        stdscr.addstr("\nEnter course's ID: ")
-        course_id = stdscr.getstr().decode().strip()
-        
+        course_name = getInput(stdscr, "\nEnter course's name: ")
+        course_id = getInput(stdscr, "\nEnter course's ID: ")
         
         course = Course()
         course.setName(course_name)
@@ -274,6 +257,7 @@ class UI():
                 self.stdscr.addstr(f"{option}\n")
 
         self.stdscr.refresh()
+    
         
     def run(self):
         highlight_idx = 0
@@ -327,7 +311,7 @@ class UI():
                     if course:
                         course.sortbyGPA(self.stdscr)
                     self.close()
-                # is 6 necessary?
+
                 elif choice == 6:
                     self.start()
                     self.stdscr.addstr("Exiting...")
@@ -348,11 +332,10 @@ def selectCourse(course_list, stdscr):
     stdscr.clear()
     stdscr.addstr("\nSelect a course by entering its ID: ")
     for idx, course in enumerate(course_list, start=1):
-        stdscr.addstr(f"\n{idx}. {course._id} - {course._name}")
+        stdscr.addstr(f"\n{idx}. ID: {course._id} - Course: {course._name}")
     stdscr.refresh()
     
-    stdscr.addstr("\nEnter course ID: ")
-    choice = stdscr.getstr().decode().strip()
+    choice = getInput(stdscr, "\nEnter course ID: ")
     
     selected = next((course for course in course_list if course._id == choice), None)
     if not selected:
@@ -361,7 +344,35 @@ def selectCourse(course_list, stdscr):
         stdscr.getch()
         
     return selected
-    
+
+
+def getInput(stdscr, prompt):
+        """
+        Allows the user to type input from keyboard and display spontaneously on the screen
+        """
+        stdscr.addstr(prompt)
+
+        input_str = ""
+        while True:
+            key = stdscr.getch()
+
+            if key in [curses.KEY_ENTER, 10, 13]: # (ASCII 10 ='\n', 13 = '\r')
+                break
+            elif key in [curses.KEY_BACKSPACE, 8, 127]:  
+                if len(input_str) > 0:
+                    input_str = input_str[:-1]
+                    y, x = stdscr.getyx()  
+                    if x > 0:
+                        stdscr.move(y, x - 1)  
+                        stdscr.delch()         
+            elif key >= 32 and key <= 126: # ASCII range
+                input_str += chr(key) # convert ASCII to characters
+                stdscr.addstr(chr(key))
+
+            stdscr.refresh()
+
+        return input_str.strip()  
+
 
 def main(stdscr):
     curses.curs_set(0)
