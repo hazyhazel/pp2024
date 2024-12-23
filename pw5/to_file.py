@@ -6,7 +6,7 @@ import os
 def studentsToFile(students):
     try:
         print("Saving student's information to 'students.txt'")
-        f = open("students.txt", "a+")
+        f = open("students.txt", "w+")
         for idx, student in enumerate(students, start=1):
             f.write(f"{idx}. {student.getName()}" + "\r")
             f.write(student.getID() + "\r")
@@ -21,7 +21,7 @@ def studentsToFile(students):
 def coursesToFile(courses):
     try:
         print("Saving course's information to 'courses.txt'")
-        f = open("courses.txt", "a+")
+        f = open("courses.txt", "w+")
         for idx, course in enumerate(courses, start=1):
             f.write(f"{idx}. {course.getName()}" + "\r")
             f.write(course.getID() + "\n")
@@ -35,7 +35,7 @@ def coursesToFile(courses):
 def marksToFile(courses):
     try:
         print("Saving marks to 'marks.txt'")
-        f = open("marks.txt", "a+")
+        f = open("marks.txt", "w+")
         for course in courses:
             marks = course.getMarks()
             for student_id in marks.key():
