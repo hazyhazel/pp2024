@@ -1,0 +1,28 @@
+Course: Maths (ID: MAT)
+Student ID: 23BI10001
+Attendance: 20
+Midterm: 17
+Final: 14
+GPA: 15.80
+
+Course: Maths (ID: MAT)
+Student ID: 23BI10011
+Attendance: 20
+Midterm: 18
+Final: 12
+GPA: 15.20
+
+Course: Maths (ID: MAT)
+Student ID: 23BI10111
+Attendance: 19
+Midterm: 18
+Final: 14
+GPA: 16.10
+
+Course: Maths (ID: MAT)
+Student ID: 23BI11111
+Attendance: 19
+Midterm: 16
+Final: 14
+GPA: 15.30
+
