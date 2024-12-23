@@ -38,10 +38,14 @@ def marksToFile(courses):
         f = open("marks.txt", "w+")
         for course in courses:
             marks = course.getMarks()
-            for student_id in marks.key():
-                f.write(student_id + "\n")
-                for mark in marks[student_id]:
-                    f.write(mark + "\r")
+            for student_id, mark_list in marks.items():
+                f.write(f"Course: {course.getName()} (ID: {course.getID()})\n")
+                f.write(f"Student ID: {student_id}\n")
+                f.write(f"Attendance: {mark_list[0]}\n")
+                f.write(f"Midterm: {mark_list[1]}\n")
+                f.write(f"Final: {mark_list[2]}\n")
+                f.write(f"GPA: {mark_list[3]:.2f}\n")
+                f.write("\n")
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
