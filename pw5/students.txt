@@ -1,4 +1,12 @@
-1. Nguyen Ngoc Anh23BI1000111/01
-2. Ha Xuan Bach23BI1001120/03
-3. Nguyen Viet Cuong23BI1011118/06
-4. Tran Xuan Duong23BI1111120/09
+1. Nguyen Ngoc A
+23BI10001
+11/01
+2. Ha Xuan B
+23BI10011
+20/03
+3. Nguyen Viet C
+23BI10111
+18/06
+4. Tran Xuan D
+23BI11111
+20/11
