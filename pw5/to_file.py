@@ -8,8 +8,8 @@ def studentsToFile(students):
         print("Saving student's information to 'students.txt'")
         f = open("students.txt", "w+")
         for idx, student in enumerate(students, start=1):
-            f.write(f"{idx}. {student.getName()}" + "\r")
-            f.write(student.getID() + "\r")
+            f.write(f"{idx}. {student.getName()}" + "\n")
+            f.write(student.getID() + "\n")
             f.write(student.getDob() + "\n")
         print("Saved")
     except Exception as e:
@@ -23,8 +23,7 @@ def coursesToFile(courses):
         print("Saving course's information to 'courses.txt'")
         f = open("courses.txt", "w+")
         for idx, course in enumerate(courses, start=1):
-            f.write(f"{idx}. {course.getName()}" + "\r")
-            f.write(course.getID() + "\n")
+            f.write(f"{idx}. {course.getName()} - {course.getID()}\n")
         print("Saved")
     except Exception as e:
         print(f"An error occurred: {e}")
