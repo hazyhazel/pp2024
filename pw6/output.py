@@ -42,14 +42,25 @@ class UI():
                 self.stdscr.addstr(f"{option}\n")
 
         self.stdscr.refresh()
-    
+
+
+    def loadData(self, filename):
+        try:
+            return decompressAndUnpickle(filename)
+        except IOError:
+            print(f"Failed to load this file")
+            # Return students and courses as empty lists
+            return [], []
+
+
+    def saveData(self, students, courses, filename):
+        pickleAndCompress(students, courses, filename)
+
         
     def run(self):
+        students, courses = self.loadData("students.dat")
         highlight_idx = 0
-        students = []
-        courses = []
-        file_names = ["students.txt", "courses.txt", "marks.txt"]
-        
+    
         while True:
             self.displayMenu(highlight_idx)
 
@@ -66,7 +77,6 @@ class UI():
                     self.start()
                     student = Student.newStudent(self.stdscr)
                     students.append(student)
-                    studentsToFile(students)
                     self.stdscr.addstr("\nNew student added! ")
                     self.close()
                     
@@ -74,7 +84,6 @@ class UI():
                     self.start()
                     course = Course.newCourse(self.stdscr)
                     courses.append(course)
-                    coursesToFile(courses)
                     self.stdscr.addstr("\nNew course added! ")
                     self.close()
                     
@@ -83,7 +92,6 @@ class UI():
                     course = selectCourse(courses, self.stdscr)
                     if course:
                         course.setMarks(self.stdscr)
-                        marksToFile(courses)
                         self.stdscr.addstr("\nMarks assigned! ")
                     self.close()
                     
@@ -106,5 +114,5 @@ class UI():
                     self.stdscr.addstr("Exiting...")
                     self.close()
                     break
-        
-        compress(file_names, "students.dat")
+                
+        self.saveData(students, courses, "students.dat")
